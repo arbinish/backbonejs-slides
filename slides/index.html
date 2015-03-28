@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Backbone.js Primer</title>
+
+		<meta name="description" content="An Introduction to Backbonejs">
+		<meta name="author" content="Binish A R">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+                                         
+		<style type="text/css">
+			.mycode {
+				font-size: 0.8em !important;
+			}
+		</style>
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Backbone.js</h2>
+					<h5>Supply structure to web applications</h5>  
+					<small>Binish A R / brathnap </small>
+				</section>
+
+                                                          
+				<section data-transition="zoom">
+					<h2>Why not jQuery/javascript</h2>
+					<p class="fragment">We have to store information in DOM</p>   
+					<p class="fragment">Deal with Callback hell</p>
+					<pre><code class="fragment" data-trim>
+$.getJSON("/users", function(users) {
+   var entry = "";
+   $.each(users, function(index, value) {                       
+	 entry += '<li id="user-' + value.id + '">'
+		+ value.name + '</li>';
+   });
+   $("ul").append(list);
+   $("li").click(function(evt) {
+	   var $this = $(this);
+		var id = $this.attr("id").replace("item-", "");
+		$.post("/user", {id: id}, function() {
+			$this.fadeOut(function() {
+				$this.remove();
+			});
+		});
+	});
+});
+</code></pre>
+					<aside class="notes"><ol><li>Callback Hell is the affectionate name given to what happens when you want to do a bunch of sequential things using these asynchronous functions.</li><li>jQuery promises can solve this to some extent</li>
+						<li>Show a sample app using vanilla Javascript</li></ol></aside>     
+									</section>
+				<section>
+					<h3>What do we need then?</h3>
+					<ul>
+						<li class="fragment">Abstraction</li>
+						<li class="fragment">Decouple UI from Data</li>
+						<li class="fragment">No more callbacks</li>
+					</ul>
+				</section>
+				<section style="text-align: left;">
+					<h2>Why Backbone.js</h2>     
+					<p class="fragment">Add structure to your client side code</p>
+					<p class="fragment">From server side to client side</p>
+					<p class="fragment">Open source</p>
+					<p class="fragment">Single Page Application framework</p>
+					<p class="fragment">Dependencies<small><ul class="fragment">
+						<li>underscore.js or lo-dash</li>
+						<li>jquery or zepto</li>
+					</ul></small></p>            
+				</section>
+				
+				<section>
+					<h3>Inside Backbone.js</h3>
+					<p class="fragment">Models &amp; Collections</p>
+					<p class="fragment">Views</p>
+					<p class="fragment" style="text-decoration: line-through">Controllers</p>
+					<p class="fragment">Templates</p>
+					<p class="fragment">Routers</p>
+					<aside class="notes"><ol>
+						<li>Mention naming conventions for models/controllers/views</li>
+					</ol></aside>			
+				</section>
+				<section>
+					<h5>Architecture</h5>
+					<img src="mvc.png"/>
+				</section>
+				<section>
+					<section data-transition="fade" style="text-align: left;">
+					<h3>Models &amp; Collections</h3>
+					<p class="fragment">1. Data &amp; business logic</p>					
+					<p class="fragment">2. Events</p>
+					<p class="fragment">3. Rest integration</p></section>
+					<section>
+										<pre><code class="" style="font-size:0.9em;" data-trim>
+var User = Backbone.Model.extend({
+	defaults: {
+		id: null,
+		name: '',
+		email: ''
+	}
+});
+</code> </pre>
+					<pre><code class="fragment" data-trim style="font-size:0.8em;">
+var peter = new User({id: 1, name: "Peter Parker", email: "peter.parker@linkedin.com"});
+					</code> </pre>
+					<pre><code class="fragment" style="font-size:0.8em;">peter.toJSON()
+{ id: 1,
+  name: 'Peter Parker',
+  email: 'peter.parker@linkedin.com' }	
+					</code></pre>			   
+					</section><section>
+						<pre><code class="" style="font-size:0.8em">
+peter.get("name");
+Peter Parker
+</code></pre>
+<pre><code class="fragment" style="font-size:0.8em">
+peter.set('name', 'Peter Hains');
+peter.toJSON();
+{ id: 1,
+  name: 'Peter Hains',
+  email: 'peter@linkedin.com' }						
+					</code></pre>
+
+					<pre><code class="fragment" style="font-size:0.8em;">
+var User = Backbone.Model.extend({
+	urlRoot: "/api/user"
+});                       
+					</code></pre>
+					<pre><code class="fragment" style="font-size: 0.8em;">
+var peter = new User({id: 3}).fetch();
+					</code></pre>
+					<pre><code class="fragment" style="font-size:0.8em">peter.save(); // NOTE urlRoot should be set</code></pre>
+					</section>
+					<section>
+						<pre><code style="font-size: 0.8em;">
+var Users = Backbone.Collection.extend({
+	model: User,
+	url: "/api/users"
+});
+</code></pre>
+<pre><code class="fragment mycode">var users = new Users().fetch();</code></pre>
+<pre><code class="fragment mycode">users.add(new User({id: 1, name: "Someone", email: "some.one@somemail.com"}));</code></pre>
+<pre><code class="fragment mycode">users.add(new User({id: 2, name: "Another person", email: "another.one@somemail.com"}));</code></pre>  
+<pre><code class="fragment mycode">
+users.toJSON();
+[ { id: 1,
+   name: 'Someone',
+   email: 'some.one@somemail.com' },
+ { id: 2,
+   name: 'Another person',
+   email: 'another.one@somemail.com' } ]</code></pre>
+					</section>
+					</section> 						
+					<section data-transition="fade" style="font-size:0.9em;">
+						<h3>Templates</h3> 
+						<ul>
+							<li class="fragment"> Leverages Underscore templates</li>
+							<li class="fragment">renders complicated HTML from JSON sources, Backbone models and collections</li>
+							<li class="fragment">interpolate values using &lt;%= ... %&gt;</li>
+							<li class="fragment">execute arbitrary javascript with &lt;% ... %&gt;</li>
+							<li class="fragment">interpolate and HTML-escaped &lt;%- ... %&gt;</li>
+						</ul>
+					</section>
+					
+				<section data-transition="slide" >
+					<section style="text-align:left;">
+						<h3>Views</h3>
+						<p>Organize your interface into logical views backed by models and collections</p> 
+						<p class="fragment">Each view can be updated independently when model / collection changes</p>
+					</section>   
+					<section>
+					<pre><code class="mycode">
+var UserView = Backbone.View.extend({
+	tagName: "li",
+	className: "row",
+	template: _.template("<span><%= name %></span>"),
+	events: {
+		"change .name": "updateName"
+	},
+	updateName: function(e) {
+		this.model.set("name", e.target.value);
+	}
+	initialize: function() {
+		console.log("initialized UserView");
+	},
+	render: function() {
+		this.$el.html(this.template({name: this.model.get("name")}));
+	}
+});							   
+					</code></pre>
+					<pre><code class="fragment mycode">
+var userView = new UserView().render().el;						
+					</code></pre>
+					<pre><code class="fragment mycode">
+<li class="row"><span>Peter Parker</span></li>						
+					</code></pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Routers</h3>
+						<p class="fragment">Provide linkable, bookmarkable, shareable URLs for locations in app</p>
+						<p class="fragment">Call <em>Backbone.history.start()</em> after initializing router</p>
+					</section>
+					<section>
+						<pre><code class="mycode">
+var AppRouter = Backbone.Router.extend({
+	routes: {
+		"": "home",
+		"index": "home",
+		"user/:id": "user"
+	},
+	home: function() {
+		// show home view
+	},
+	user: function(id) {
+		// show user View
+	}
+});
+</code></pre>
+<pre><code class="fragment mycode">
+	var router = new AppRouter;
+	Backbone.history.start();
+</code></pre>
+					</section>
+				</section>   
+				<section>
+					<h3>Sample Application</h3>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

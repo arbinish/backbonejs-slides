@@ -1,0 +1,17 @@
+body {
+	font-family: "Avenir", "Helvetica Neue", "Helvetica";
+}
+
+#content button {
+	outline: none;
+	border: none;
+}
+
+div.row {
+	margin-top: 1em;
+}
+
+#content input.btn {	
+	border: 1px inset;
+	outline: none;
+}

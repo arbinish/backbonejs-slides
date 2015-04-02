@@ -14,24 +14,24 @@ class User(db.Model):
      id = db.Column(db.Integer, primary_key=True)
      name = db.Column(db.String)
      department = db.Column(db.String)
-     
+
      def toDict(self):
          return dict(id=self.id, name=self.name, department=self.department)
-     
- 
+
+
 @app.route("/api/users")
 def get_users():
      resp = []
      for user in User.query:
          resp.append(user.toDict())
      return jsonify(objects=resp)
-     
+
 
 @app.route("/api/user", methods=["POST"])
 def create_user():
     if not request.json:
         return jsonify(message="no data received"), 400
-    
+
     name = request.json.get('name')
     dept = request.json.get('department')
     if not all([name, dept]):
@@ -63,7 +63,7 @@ def update_user(user_id):
     return jsonify(message="updated"), 200
 
 
-@app.route("/api/user/<int:user_id>", methods=["PUT"])
+@app.route("/api/user/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     try:
@@ -76,4 +76,4 @@ def delete_user(user_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
+
